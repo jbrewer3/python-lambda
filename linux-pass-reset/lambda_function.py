@@ -38,14 +38,25 @@ def lambda_handler(event, context):
             instance_ids.append(instance['InstanceId'])
 
     for instance_id in instance_ids:
+        
+
 
         length=14
         characters = string.ascii_letters + string.digits
         password = ''.join(random.choice(characters) for _ in range(length))
-        ssm_command = f"sudo sh -c 'echo ec2-user:{password} | chpasswd'"
+
+        is_windows_instance = instance['Platform'] == 'windows'
+
+
+        if is_windows_instance:
+            ssm_command = f"Invoke-Command -ScriptBlock {{ $password = ConvertTo-SecureString -String '{password}' -AsPlainText -Force; Set-LocalUser -Name 'Administrator' -Password $password }}"
+            document_name = 'AWS-RunPowerShellScript'
+        else:
+            ssm_command = f"sudo sh -c 'echo ec2-user:{password} | chpasswd'"
+            document_name = 'AWS-RunShellScript'
         response = ssm_client.send_command(
             InstanceIds=[instance_id],
-            DocumentName='AWS-RunShellScript',
+            DocumentName=document_name,
             Parameters={'commands': [ssm_command]},
         )
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:

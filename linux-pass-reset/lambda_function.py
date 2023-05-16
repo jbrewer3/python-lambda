@@ -73,7 +73,7 @@ def lambda_handler(event, context):
         if response['ResponseMetadata']['HTTPStatusCode'] != 200:
             print(f"error executing ssm command on instance {instance_id}")
         
-        secret_name = f"{instance_id}-ec2-password-45-{datetime.datetime.today().strftime('%Y-%m-%d_%H%M')}"
+        secret_name = f"{instance_id}-ec2-password-{datetime.datetime.today().strftime('%Y-%m-%d_%H%M')}"
         secret_value = {'password': password}
         secrets_manager_client.create_secret(
             Name=secret_name,

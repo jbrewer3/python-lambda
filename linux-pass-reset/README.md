@@ -43,7 +43,7 @@ To deploy this lambda function you must follow the steps below.
     ]
 }`
 2.	Create IAM role to attache this policy too. 
-3.	Create your Lambda Function with the following code. https://github.com/jbrewer3/python-lambda/blob/main/linux-pass-reset/lambda_function.py Note. Ensure you select the new IAM role that you created earlier so that the function has proper permissions. 
+3.	Create your Lambda Function with the following code. lambda_function.py Note. Ensure you select the new IAM role that you created earlier so that the function has proper permissions. 
 5.	Create your EC2 instances both linux and windows and ensure you have user data script to install ssm. Please see the two post for instructions on this. 
 	1 https://repost.aws/knowledge-center/install-ssm-agent-ec2-linux 
 	2 https://repost.aws/knowledge-center/ssm-agent-windows-ec2

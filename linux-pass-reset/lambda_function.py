@@ -11,7 +11,7 @@ AWS_REGION = "us-east-2"
 
 def lambda_handler(event, context):
 
-    tag_key = 'tag:Linux-Pass-Rotation'
+    tag_key = 'tag:Pass-Rotation'
     tag_value= 'True'
 
     response = ec2_client.describe_instances(
@@ -36,6 +36,7 @@ def lambda_handler(event, context):
     for reservation in response['Reservations']:
         for instance in reservation['Instances']:
             instance_ids.append(instance['InstanceId'])
+            is_windows_instance = instance['Platform'] == 'windows'
 
     for instance_id in instance_ids:
         
@@ -45,15 +46,17 @@ def lambda_handler(event, context):
         characters = string.ascii_letters + string.digits
         password = ''.join(random.choice(characters) for _ in range(length))
 
-        is_windows_instance = instance['Platform'] == 'windows'
+        #is_windows_instance = instance['Platform'] == 'windows'
 
 
+        
         if is_windows_instance:
             ssm_command = f"Invoke-Command -ScriptBlock {{ $password = ConvertTo-SecureString -String '{password}' -AsPlainText -Force; Set-LocalUser -Name 'Administrator' -Password $password }}"
             document_name = 'AWS-RunPowerShellScript'
         else:
             ssm_command = f"sudo sh -c 'echo ec2-user:{password} | chpasswd'"
             document_name = 'AWS-RunShellScript'
+
         response = ssm_client.send_command(
             InstanceIds=[instance_id],
             DocumentName=document_name,

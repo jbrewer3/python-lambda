@@ -1,4 +1,4 @@
-# python-lambda
+# python-lambda Password Reset
 
 To deploy this lambda function you must follow the steps below.
 

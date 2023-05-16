@@ -24,6 +24,7 @@ def is_windows_instance(instance):
 
 def lambda_handler(event, context):
 
+
     tag_key = 'tag:Password-Rotation'
     tag_value= 'True'
 
